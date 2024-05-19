@@ -144,6 +144,16 @@ html {
    color: #aaa;
 }
 
+.logout {
+   background: #ff4400;
+   padding: 8px 15px;
+   border-radius: 5px;
+}
+
+.logout:hover {
+   background: #ff0000;
+   transition: .3s;
+}
 
 
 
