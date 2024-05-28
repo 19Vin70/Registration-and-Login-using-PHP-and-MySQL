@@ -1,48 +1,47 @@
-<?php
-session_start();
-include('config.php'); 
-
-if (!isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit();
-}
-
-$user_id = $_SESSION['user_id'];
-
-$query = "SELECT name, email, image FROM users WHERE id = :user_id";
-$stmt = $conn->prepare($query);
-$stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-$stmt->execute();
-
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$user) {
-    echo "User not found";
-    exit();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Registration and Login using PHP and MySQL</title>
+        <title>Profile</title>
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
 
     <body>
-        <div class="profile-container">
-            <h1><?php echo htmlspecialchars($user['name']); ?> Profile</h1>
-            <img src="uploads/<?php echo htmlspecialchars($user['image']); ?>" alt="User Image" width="100">
-            <p>Name: <?php echo htmlspecialchars($user['name']); ?></p>
-            <p>Email: <?php echo htmlspecialchars($user['email']); ?></p>
-
+        <div class="profile-container" id="profile-container">
+            <h1 id="user-name">Loading...</h1>
+            <img id="user-image" src="" alt="User Image" width="100">
+            <p>Name: <span id="user-name-span">Loading...</span></p>
+            <p>Email: <span id="user-email">Loading...</span></p>
             <a href="logout.php" class="logout">Logout</a>
         </div>
+
+        <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: 'fetch_user.php',
+                method: 'GET',
+                cache: false,
+                dataType: 'json',
+                success: function(data) {
+                    if (data.error) {
+                        console.log(data.error);
+                    } else {
+                        $('#user-name').text(data.name || 'No name available');
+                        $('#user-image').attr('src', 'uploads/' + (data.image || 'default.jpeg'));
+                        $('#user-name-span').text(data.name || 'No name available');
+                        $('#user-email').text(data.email || 'No email available');
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log('AJAX Error: ' + textStatus + ': ' + errorThrown);
+                }
+            });
+        });
+        </script>
     </body>
 
 </html>

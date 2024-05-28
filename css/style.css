@@ -148,6 +148,8 @@ html {
    background: #ff4400;
    padding: 8px 15px;
    border-radius: 5px;
+   font-size: 18px;
+   color: #fff;
 }
 
 .logout:hover {
